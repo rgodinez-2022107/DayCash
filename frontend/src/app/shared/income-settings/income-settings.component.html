@@ -77,6 +77,24 @@
         <span>Ingreso Mensual Total</span>
         <strong>{{ income.formatMoney(income.monthlyTotal) }}</strong>
       </div>
+
+      <!-- Comentario opcional -->
+      <div class="settings-block">
+        <label class="block-label" for="incomeNote">Comentario (opcional)</label>
+        <input
+          id="incomeNote"
+          type="text"
+          class="text-input"
+          [(ngModel)]="income.incomeNote"
+          name="incomeNote"
+          placeholder="Ej: Pago quincenal, Horas extra proyecto X..."
+        />
+      </div>
+
+      <!-- Acción de registro -->
+      <button class="submit-btn" (click)="onSubmit()">
+        + Registrar Ingreso
+      </button>
     </div>
   </div>
 </div>
