@@ -84,7 +84,7 @@
         <div class="card balance-card">
           <div class="card-header">
             <span class="card-title">Balance Total</span>
-            <button class="options-btn">•••</button>
+            <button class="options-btn" (click)="openIncomeSettings()" title="Configuración de ingresos">•••</button>
           </div>
           <div class="balance-body">
             <h2>{{ totalBalance }}</h2>
@@ -147,4 +147,7 @@
       </div>
     </div>
   </main>
+
+  <!-- Modal de Configuración de Ingresos -->
+  <app-income-settings *ngIf="showIncomeSettings" (close)="closeIncomeSettings()"></app-income-settings>
 </div>
