@@ -1,0 +1,367 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-shell" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div>
+        <h2 class="modal-title">Gestión de Metas y Fondos</h2>
+        <span class="modal-subtitle">Edita metas, ajusta presupuestos y crea nuevas metas desde cero</span>
+      </div>
+      <button class="modal-close" (click)="onClose()" title="Cerrar">
+        <span>×</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <!-- Botón Nueva Meta -->
+      <button class="new-goal-btn" (click)="toggleNewGoalForm()">
+        <span class="new-goal-plus">+</span> Nueva Meta
+      </button>
+
+      <!-- Formulario de nueva meta -->
+      <div class="new-goal-form" *ngIf="showNewGoalForm">
+        <h4 class="form-title">Crear nueva meta</h4>
+        <div class="goal-inputs">
+          <div class="field">
+            <label class="field-label" for="newGoalTitle">Título de la meta</label>
+            <input
+              id="newGoalTitle"
+              type="text"
+              class="text-input"
+              [(ngModel)]="newGoalDraft.title"
+              name="newGoalTitle"
+              placeholder="Ej: Viaje de fin de año"
+              required
+            />
+          </div>
+          <div class="field">
+            <label class="field-label" for="newGoalDesc">Subtítulo / Descripción</label>
+            <input
+              id="newGoalDesc"
+              type="text"
+              class="text-input"
+              [(ngModel)]="newGoalDraft.description"
+              name="newGoalDesc"
+              placeholder="Ej: Ahorro para vacaciones"
+            />
+          </div>
+          <div class="field">
+            <label class="field-label" for="newGoalContribution">Aporte inicial (Q)</label>
+            <input
+              id="newGoalContribution"
+              type="number"
+              class="text-input"
+              [(ngModel)]="newGoalDraft.contribution"
+              name="newGoalContribution"
+              min="0"
+              step="100"
+            />
+          </div>
+          <div class="field">
+            <label class="field-label" for="newGoalTarget">Monto total de la meta (Q)</label>
+            <input
+              id="newGoalTarget"
+              type="number"
+              class="text-input"
+              [(ngModel)]="newGoalDraft.target"
+              name="newGoalTarget"
+              min="0"
+              step="100"
+            />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="form-cancel" (click)="toggleNewGoalForm()">Cancelar</button>
+          <button class="form-submit" (click)="createNewGoal()">✓ Crear meta</button>
+        </div>
+      </div>
+
+      <!-- ===== Fondo de Ahorro para Metas ===== -->
+      <div class="fund-card">
+        <div class="fund-header">
+          <span class="fund-icon">🎯</span>
+          <div class="fund-heading">
+            <div *ngIf="editingGoal !== 'savings'">
+              <h3 class="fund-title">{{ income.savingsGoal().title }}</h3>
+              <p class="fund-desc">{{ income.savingsGoal().description }}</p>
+            </div>
+            <div *ngIf="editingGoal === 'savings'" class="heading-edit">
+              <input
+                type="text"
+                class="text-input"
+                [(ngModel)]="savingsTitle"
+                name="savingsTitle"
+                placeholder="Título de la meta"
+              />
+              <input
+                type="text"
+                class="text-input"
+                [(ngModel)]="savingsDescription"
+                name="savingsDescription"
+                placeholder="Descripción de la meta"
+              />
+            </div>
+          </div>
+          <button class="edit-toggle" (click)="toggleEdit('savings')" [title]="editingGoal === 'savings' ? 'Guardar' : 'Editar'">
+            {{ editingGoal === 'savings' ? '✓' : '✎' }}
+          </button>
+        </div>
+
+        <div class="goal-inputs">
+          <div class="field">
+            <label class="field-label" for="savingsContribution">Aporte / Abono</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
+              <input
+                id="savingsContribution"
+                type="number"
+                class="money-input"
+                [(ngModel)]="savingsContribution"
+                name="savingsContribution"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="savingsTarget">Monto total de la meta</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
+              <input
+                id="savingsTarget"
+                type="number"
+                class="money-input"
+                [(ngModel)]="savingsTarget"
+                name="savingsTarget"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="fund-metric">
+          <span class="fund-current">{{ income.formatMoney(income.savingsGoal().contribution) }}</span>
+          <span class="fund-divider">/</span>
+          <span class="fund-target">{{ income.formatMoney(income.savingsGoal().target) }}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill orange" [style.width.%]="income.savingsProgress"></div>
+        </div>
+        <span class="progress-value">{{ income.savingsProgress }}% completado</span>
+      </div>
+
+      <!-- ===== Control de Presupuesto por Categorías (interactivo) ===== -->
+      <div class="fund-card">
+        <div class="fund-header">
+          <span class="fund-icon">🗂️</span>
+          <div class="fund-heading">
+            <h3 class="fund-title">Control de Presupuesto por Categorías</h3>
+            <p class="fund-desc">Configura el presupuesto y gasto de cada categoría</p>
+          </div>
+          <button class="edit-toggle" (click)="toggleEdit('budget')" [title]="editingGoal === 'budget' ? 'Ocultar edición' : 'Editar montos'">
+            {{ editingGoal === 'budget' ? '✓' : '✎' }}
+          </button>
+        </div>
+
+        <div class="category-list">
+          <div class="category-item" *ngFor="let category of income.budgetCategories(); let i = index; trackBy: trackIndex">
+            <div class="category-top">
+              <input
+                *ngIf="editingGoal === 'budget'"
+                type="text"
+                class="text-input inline"
+                [value]="category.name"
+                (change)="updateCategoryName($any($event.target).value, i)"
+                placeholder="Nombre de categoría"
+              />
+
+              <div class="category-summary" *ngIf="editingGoal !== 'budget'">
+                <span class="category-name">{{ category.name }}</span>
+                <span class="category-amount">
+                  {{ income.formatMoney(category.spent) }} / {{ income.formatMoney(category.budget) }}
+                </span>
+              </div>
+
+              <div class="category-edits" *ngIf="editingGoal === 'budget'">
+                <div class="mini-field">
+                  <label class="mini-label">Gastado (Q)</label>
+                  <input
+                    type="number"
+                    class="money-input mini-input"
+                    [value]="category.spent"
+                    (change)="updateCategorySpent(toNumber($any($event.target).value), i)"
+                    min="0"
+                  />
+                </div>
+                <div class="mini-field">
+                  <label class="mini-label">Total (Q)</label>
+                  <input
+                    type="number"
+                    class="money-input mini-input"
+                    [value]="category.budget"
+                    (change)="updateCategoryBudget(toNumber($any($event.target).value), i)"
+                    min="0"
+                  />
+                </div>
+                <button class="remove-btn" (click)="removeCategory(i)" title="Eliminar categoría">×</button>
+              </div>
+            </div>
+
+            <div class="progress-bar">
+              <div class="progress-fill orange" [style.width.%]="income.categoryProgress(category)"></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="add-category-btn" (click)="addCategory()">
+          <span>+</span> Agregar categoría
+        </button>
+      </div>
+
+      <!-- ===== Fondo de Emergencia ===== -->
+      <div class="fund-card">
+        <div class="fund-header">
+          <span class="fund-icon">🛟</span>
+          <div class="fund-heading">
+            <div *ngIf="editingGoal !== 'emergency'">
+              <h3 class="fund-title">{{ income.emergencyGoal().title }}</h3>
+              <p class="fund-desc">{{ income.emergencyGoal().description }}</p>
+            </div>
+            <div *ngIf="editingGoal === 'emergency'" class="heading-edit">
+              <input
+                type="text"
+                class="text-input"
+                [(ngModel)]="emergencyTitle"
+                name="emergencyTitle"
+                placeholder="Título del fondo"
+              />
+              <input
+                type="text"
+                class="text-input"
+                [(ngModel)]="emergencyDescription"
+                name="emergencyDescription"
+                placeholder="Descripción del fondo"
+              />
+            </div>
+          </div>
+          <button class="edit-toggle" (click)="toggleEdit('emergency')" [title]="editingGoal === 'emergency' ? 'Guardar' : 'Editar'">
+            {{ editingGoal === 'emergency' ? '✓' : '✎' }}
+          </button>
+        </div>
+
+        <div class="goal-inputs">
+          <div class="field">
+            <label class="field-label" for="emergencyContribution">Aporte / Abono</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
+              <input
+                id="emergencyContribution"
+                type="number"
+                class="money-input"
+                [(ngModel)]="emergencyContribution"
+                name="emergencyContribution"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="emergencyTarget">Monto total de la meta</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
+              <input
+                id="emergencyTarget"
+                type="number"
+                class="money-input"
+                [(ngModel)]="emergencyTarget"
+                name="emergencyTarget"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="fund-metric">
+          <span class="fund-current">{{ income.formatMoney(income.emergencyGoal().contribution) }}</span>
+          <span class="fund-divider">/</span>
+          <span class="fund-target">{{ income.formatMoney(income.emergencyGoal().target) }}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill orange" [style.width.%]="income.emergencyProgress"></div>
+        </div>
+        <span class="progress-value">{{ income.emergencyProgress }}% de protección</span>
+      </div>
+
+      <!-- ===== Metas personalizadas (creadas por el usuario) ===== -->
+      <div class="custom-goals" *ngIf="income.customGoals().length > 0">
+        <h4 class="custom-goals-title">Metas personalizadas</h4>
+        <div class="fund-card" *ngFor="let goal of income.customGoals(); let g = index; trackBy: trackIndex">
+          <div class="fund-header">
+            <span class="fund-icon">⭐</span>
+            <div class="fund-heading">
+              <div *ngIf="!isCustomEditing(g)">
+                <h3 class="fund-title">{{ goal.title }}</h3>
+                <p class="fund-desc" *ngIf="goal.description">{{ goal.description }}</p>
+              </div>
+              <div *ngIf="isCustomEditing(g)" class="heading-edit">
+                <input
+                  type="text"
+                  class="text-input"
+                  [value]="goal.title"
+                  (change)="updateCustomTitle($any($event.target).value, g)"
+                  placeholder="Título de la meta"
+                />
+                <input
+                  type="text"
+                  class="text-input"
+                  [value]="goal.description"
+                  (change)="updateCustomDescription($any($event.target).value, g)"
+                  placeholder="Descripción de la meta"
+                />
+              </div>
+            </div>
+            <button class="edit-toggle" (click)="toggleEditCustom(g)" [title]="isCustomEditing(g) ? 'Guardar' : 'Editar'">
+              {{ isCustomEditing(g) ? '✓' : '✎' }}
+            </button>
+            <button class="remove-btn" (click)="removeCustomGoal(g)" title="Eliminar meta">×</button>
+          </div>
+
+          <div class="goal-inputs">
+            <div class="field">
+              <label class="field-label">Aporte / Abono (Q)</label>
+              <input
+                type="number"
+                class="money-input"
+                [value]="goal.contribution"
+                (change)="updateCustomContribution(toNumber($any($event.target).value), g)"
+                min="0"
+                step="100"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label">Monto total de la meta (Q)</label>
+              <input
+                type="number"
+                class="money-input"
+                [value]="goal.target"
+                (change)="updateCustomTarget(toNumber($any($event.target).value), g)"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+
+          <div class="fund-metric">
+            <span class="fund-current">{{ income.formatMoney(goal.contribution) }}</span>
+            <span class="fund-divider">/</span>
+            <span class="fund-target">{{ income.formatMoney(goal.target) }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill orange" [style.width.%]="customGoalProgress(goal)"></div>
+          </div>
+          <span class="progress-value">{{ customGoalProgress(goal) }}% completado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
