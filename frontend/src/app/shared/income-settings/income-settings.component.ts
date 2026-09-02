@@ -15,6 +15,13 @@ export class IncomeSettingsComponent {
 
   constructor(public income: IncomeService) {}
 
+  onSubmit(): void {
+    const total = this.income.monthlyTotal;
+    const note = this.income.incomeNote().trim();
+    this.income.addIncomeTransaction(total, note);
+    this.onClose();
+  }
+
   onClose(): void {
     this.close.emit();
   }
