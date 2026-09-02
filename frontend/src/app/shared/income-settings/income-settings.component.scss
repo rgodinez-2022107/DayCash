@@ -217,3 +217,48 @@
     color: var(--color-orange, #f39c12);
   }
 }
+
+/* Campo de comentario opcional */
+.text-input {
+  width: 100%;
+  background: var(--color-navy, #0b192c);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: var(--color-white, #ffffff);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 11px 12px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &::placeholder {
+    color: #4d5b7a;
+  }
+
+  &:focus {
+    border-color: var(--color-orange, #f39c12);
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
+  }
+}
+
+/* Botón de registro de ingreso */
+.submit-btn {
+  margin-top: 4px;
+  background: var(--color-orange, #f39c12);
+  color: var(--color-navy, #0a192f);
+  border: none;
+  border-radius: 8px;
+  padding: 13px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: var(--color-orange-dark, #d68910);
+  }
+  &:active {
+    transform: scale(0.99);
+  }
+}
