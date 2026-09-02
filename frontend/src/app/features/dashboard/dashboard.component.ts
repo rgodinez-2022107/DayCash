@@ -21,8 +21,6 @@ export class DashboardComponent {
   showGoalsSettings = false;
   balanceTrend: string = '+0.0%';
 
-  recentActivities: { title: string; date: string; amount: string; type: string }[] = [];
-
   constructor(
     private authService: AuthService,
     private router: Router,
