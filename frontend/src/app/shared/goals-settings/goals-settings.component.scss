@@ -1,0 +1,266 @@
+/* ===== Overlay del modal ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 17, 30, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 24px;
+}
+
+/* ===== Contenedor principal del modal ===== */
+.modal-shell {
+  background: var(--color-navy-light, #112240);
+  border: 1px solid rgba(243, 156, 18, 0.18);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
+  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: 'Inter', sans-serif;
+  color: var(--color-white, #ffffff);
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ===== Encabezado ===== */
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 28px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-white, #ffffff);
+}
+
+.modal-subtitle {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--color-text-muted, #8892b0);
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-text-muted, #8892b0);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  transition: all 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    color: var(--color-navy, #0a192f);
+    background: var(--color-orange, #f39c12);
+    border-color: var(--color-orange, #f39c12);
+  }
+}
+
+/* ===== Cuerpo del modal ===== */
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 28px 28px;
+  overflow-y: auto;
+}
+
+/* Tarjeta de cada meta/fondo */
+.fund-card {
+  background: var(--color-navy, #0b192c);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fund-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fund-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(243, 156, 18, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.fund-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-white, #ffffff);
+}
+
+.fund-desc {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--color-text-muted, #8892b0);
+}
+
+/* Entradas de aporte y total */
+.goal-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 12px;
+  color: var(--color-text-muted, #8892b0);
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background: var(--color-navy-light, #112240);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: var(--color-orange, #f39c12);
+    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.15);
+  }
+}
+
+.input-prefix {
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-orange, #f39c12);
+  white-space: nowrap;
+}
+
+.money-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-white, #ffffff);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 0;
+}
+
+/* Métrica de progreso de cada fondo */
+.fund-metric {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+
+  .fund-current {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-orange, #f39c12);
+  }
+
+  .fund-divider {
+    color: var(--color-text-muted, #8892b0);
+  }
+
+  .fund-target {
+    font-size: 13px;
+    color: var(--color-text-muted, #8892b0);
+  }
+}
+
+/* Barras de progreso */
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.progress-fill.orange {
+  background: var(--color-orange, #f39c12);
+}
+
+.progress-value {
+  font-size: 11px;
+  color: var(--color-text-muted, #8892b0);
+  font-weight: 600;
+}
+
+/* Categorías de presupuesto */
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.category-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .category-name {
+    font-size: 12px;
+    color: var(--color-white, #ffffff);
+    font-weight: 500;
+  }
+
+  .category-amount {
+    font-size: 11px;
+    color: var(--color-text-muted, #8892b0);
+  }
+}
