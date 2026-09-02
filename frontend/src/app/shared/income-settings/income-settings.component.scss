@@ -18,7 +18,7 @@
   border: 1px solid rgba(243, 156, 18, 0.18);
   border-radius: 16px;
   width: 100%;
-  max-width: 980px;
+  max-width: 520px;
   max-height: 92vh;
   display: flex;
   flex-direction: column;
@@ -80,24 +80,13 @@
   }
 }
 
-/* ===== Cuerpo del modal: dos columnas ===== */
+/* ===== Cuerpo del modal ===== */
 .modal-body {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24px;
-  padding: 24px 28px 28px;
-  overflow-y: auto;
-
-  @media (max-width: 820px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* ===== Panel izquierdo: Configuración de Ingresos ===== */
-.income-panel {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding: 24px 28px 28px;
+  overflow-y: auto;
 }
 
 .settings-block {
@@ -112,7 +101,7 @@
   color: var(--color-white, #ffffff);
 }
 
-/* Grupo de input con prefijo/sufijo de moneda */
+/* Grupo de input con prefijo Q */
 .input-group {
   display: flex;
   align-items: center;
@@ -128,11 +117,11 @@
   }
 }
 
-.input-prefix,
-.input-suffix {
+.input-prefix {
   padding: 0 10px;
   font-size: 13px;
-  color: var(--color-text-muted, #8892b0);
+  font-weight: 600;
+  color: var(--color-orange, #f39c12);
   white-space: nowrap;
 }
 
@@ -226,141 +215,5 @@
     font-size: 22px;
     font-weight: 700;
     color: var(--color-orange, #f39c12);
-  }
-}
-
-/* ===== Panel derecho: Metas y Fondos ===== */
-.goals-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.fund-card {
-  background: var(--color-navy, #0b192c);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.fund-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.fund-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba(243, 156, 18, 0.15);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
-.fund-title {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-white, #ffffff);
-}
-
-.fund-desc {
-  margin: 2px 0 0;
-  font-size: 11px;
-  color: var(--color-text-muted, #8892b0);
-}
-
-/* Métrica de progreso de los fondos */
-.fund-metric {
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-
-  .fund-current {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--color-orange, #f39c12);
-  }
-
-  .fund-divider {
-    color: var(--color-text-muted, #8892b0);
-  }
-
-  .fund-target {
-    font-size: 13px;
-    color: var(--color-text-muted, #8892b0);
-  }
-}
-
-/* ===== Barras de progreso reutilizables ===== */
-.progress-bar {
-  width: 100%;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.progress-fill.orange {
-  background: var(--color-orange, #f39c12);
-}
-
-.progress-value {
-  font-size: 11px;
-  color: var(--color-text-muted, #8892b0);
-  font-weight: 600;
-}
-
-/* Fila de progreso dentro de la configuración de ingreso fijo */
-.progress-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  .progress-bar {
-    flex: 1;
-  }
-}
-
-/* ===== Categorías de presupuesto ===== */
-.category-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.category-item {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.category-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  .category-name {
-    font-size: 12px;
-    color: var(--color-white, #ffffff);
-    font-weight: 500;
-  }
-
-  .category-amount {
-    font-size: 11px;
-    color: var(--color-text-muted, #8892b0);
   }
 }
