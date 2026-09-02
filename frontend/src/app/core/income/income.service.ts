@@ -62,6 +62,9 @@ export class IncomeService {
     target: 0,
   });
 
+  // Metas personalizadas creadas por el usuario
+  readonly customGoals = signal<Goal[]>([]);
+
   // Historial de transacciones de ingresos registradas (con comentario opcional)
   readonly incomeTransactions = signal<IncomeTransaction[]>([]);
 
@@ -90,6 +93,41 @@ export class IncomeService {
     } else {
       this.emergencyGoal.update((g) => ({ ...g, ...patch }));
     }
+  }
+
+  // ===== Categorías de presupuesto dinámicas =====
+  addCategory(category: IncomeCategory): void {
+    this.budgetCategories.update((list) => [...list, category]);
+  }
+
+  updateCategory(index: number, patch: Partial<IncomeCategory>): void {
+    this.budgetCategories.update((list) =>
+      list.map((c, i) => (i === index ? { ...c, ...patch } : c))
+    );
+  }
+
+  removeCategory(index: number): void {
+    this.budgetCategories.update((list) => list.filter((_, i) => i !== index));
+  }
+
+  // ===== Metas personalizadas dinámicas =====
+  addCustomGoal(goal: Goal): void {
+    this.customGoals.update((list) => [...list, goal]);
+  }
+
+  updateCustomGoal(index: number, patch: Partial<Goal>): void {
+    this.customGoals.update((list) =>
+      list.map((g, i) => (i === index ? { ...g, ...patch } : g))
+    );
+  }
+
+  removeCustomGoal(index: number): void {
+    this.customGoals.update((list) => list.filter((_, i) => i !== index));
+  }
+
+  // Progreso de una meta personalizada
+  customGoalProgress(goal: Goal): number {
+    return this.goalProgress(goal.contribution, goal.target);
   }
 
   // Registrar un ingreso y agregarlo al historial con su comentario
