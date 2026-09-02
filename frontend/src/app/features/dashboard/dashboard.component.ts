@@ -4,11 +4,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { IncomeService } from '../../core/income/income.service';
 import { IncomeSettingsComponent } from '../../shared/income-settings/income-settings.component';
+import { GoalsSettingsComponent } from '../../shared/goals-settings/goals-settings.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, IncomeSettingsComponent],
+  imports: [CommonModule, IncomeSettingsComponent, GoalsSettingsComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
 })
@@ -17,13 +18,10 @@ export class DashboardComponent {
   userName: string = 'Usuario';
 
   showIncomeSettings = false;
-  balanceTrend: string = '+12.5%';
+  showGoalsSettings = false;
+  balanceTrend: string = '+0.0%';
 
-  recentActivities = [
-    { title: 'Nómina Q2', date: 'Hoy, 09:00 AM', amount: '+$45,000', type: 'income' },
-    { title: 'AWS Hosting', date: 'Ayer', amount: '-$1,200', type: 'expense' },
-    { title: 'Suscripción SaaS', date: '12 Oct', amount: '-$850', type: 'expense' }
-  ];
+  recentActivities: { title: string; date: string; amount: string; type: string }[] = [];
 
   constructor(
     private authService: AuthService,
@@ -49,7 +47,8 @@ export class DashboardComponent {
   }
 
   get fixedIncomeProgress(): number {
-    return Math.min(100, this.income.savingsProgress);
+    if (this.income.monthlyTotal <= 0) return 0;
+    return Math.round((this.income.fixedIncome() / this.income.monthlyTotal) * 100);
   }
 
   get variableIncomeProgress(): number {
@@ -64,6 +63,14 @@ export class DashboardComponent {
 
   closeIncomeSettings(): void {
     this.showIncomeSettings = false;
+  }
+
+  openGoalsSettings(): void {
+    this.showGoalsSettings = true;
+  }
+
+  closeGoalsSettings(): void {
+    this.showGoalsSettings = false;
   }
 
   addTransaction(): void {
