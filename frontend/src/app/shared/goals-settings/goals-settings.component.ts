@@ -1,7 +1,14 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IncomeService } from '../../core/income/income.service';
+import { IncomeService, IncomeCategory, Goal } from '../../core/income/income.service';
+
+interface NewGoalDraft {
+  title: string;
+  description: string;
+  contribution: number;
+  target: number;
+}
 
 @Component({
   selector: 'app-goals-settings',
@@ -14,7 +21,12 @@ export class GoalsSettingsComponent {
   @Output() close = new EventEmitter<void>();
 
   // Meta que está en modo edición (null = ninguna)
-  editingGoal: 'savings' | 'budget' | 'emergency' | null = null;
+  editingGoal: 'savings' | 'budget' | 'emergency' | 'custom' | null = null;
+  editingCustomIndex: number | null = null;
+
+  // Estado del formulario de nueva meta
+  showNewGoalForm = false;
+  newGoalDraft: NewGoalDraft = { title: '', description: '', contribution: 0, target: 0 };
 
   constructor(public income: IncomeService) {}
 
@@ -70,19 +82,93 @@ export class GoalsSettingsComponent {
     this.income.updateGoal('emergencyGoal', { target: value ?? 0 });
   }
 
-  // ===== Presupuesto por Categorías (nombre editable) =====
-  updateCategoryName(name: string, index: number): void {
-    this.income.budgetCategories.update((categories) =>
-      categories.map((c, i) => (i === index ? { ...c, name: name ?? '' } : c))
-    );
-  }
-
+  // ===== Gestión del estado de edición =====
   toggleEdit(goal: 'savings' | 'budget' | 'emergency'): void {
     this.editingGoal = this.editingGoal === goal ? null : goal;
   }
 
+  // Convierte un valor de input a número (usado en templates)
+  toNumber(value: unknown): number {
+    return Number(value) || 0;
+  }
+
+  // ===== Presupuesto por Categorías (nombres y montos editables) =====
+  updateCategoryName(name: string, index: number): void {
+    this.income.updateCategory(index, { name: name ?? '' });
+  }
+  updateCategorySpent(spent: number, index: number): void {
+    this.income.updateCategory(index, { spent: spent ?? 0 });
+  }
+  updateCategoryBudget(budget: number, index: number): void {
+    this.income.updateCategory(index, { budget: budget ?? 0 });
+  }
+  addCategory(): void {
+    this.income.addCategory({ name: 'Nueva categoría', spent: 0, budget: 0 });
+  }
+  removeCategory(index: number): void {
+    this.income.removeCategory(index);
+  }
+
+  // ===== Formulario de nueva meta =====
+  toggleNewGoalForm(): void {
+    this.showNewGoalForm = !this.showNewGoalForm;
+  }
+
+  createNewGoal(): void {
+    const title = this.newGoalDraft.title.trim();
+    if (!title) return;
+    this.income.addCustomGoal({
+      title,
+      description: this.newGoalDraft.description.trim(),
+      contribution: this.newGoalDraft.contribution ?? 0,
+      target: this.newGoalDraft.target ?? 0,
+    });
+    this.newGoalDraft = { title: '', description: '', contribution: 0, target: 0 };
+    this.showNewGoalForm = false;
+  }
+
+  // ===== Metas personalizadas =====
+  toggleEditCustom(index: number): void {
+    if (this.editingCustomIndex === index) {
+      this.editingCustomIndex = null;
+    } else {
+      this.editingCustomIndex = index;
+    }
+  }
+
+  isCustomEditing(index: number): boolean {
+    return this.editingCustomIndex === index;
+  }
+
+  updateCustomTitle(title: string, index: number): void {
+    this.income.updateCustomGoal(index, { title: title ?? '' });
+  }
+  updateCustomDescription(desc: string, index: number): void {
+    this.income.updateCustomGoal(index, { description: desc ?? '' });
+  }
+  updateCustomContribution(value: number, index: number): void {
+    this.income.updateCustomGoal(index, { contribution: value ?? 0 });
+  }
+  updateCustomTarget(value: number, index: number): void {
+    this.income.updateCustomGoal(index, { target: value ?? 0 });
+  }
+  removeCustomGoal(index: number): void {
+    this.income.removeCustomGoal(index);
+    if (this.editingCustomIndex === index) {
+      this.editingCustomIndex = null;
+    }
+  }
+
+  customGoalProgress(goal: Goal): number {
+    return this.income.customGoalProgress(goal);
+  }
+
   trackIndex(index: number): number {
     return index;
+  }
+
+  trackGoal(_index: number, goal: Goal): string {
+    return goal.title;
   }
 
   onClose(): void {
