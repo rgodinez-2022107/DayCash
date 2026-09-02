@@ -1,0 +1,147 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-shell" (click)="$event.stopPropagation()">
+    <header class="modal-header">
+      <div>
+        <h2 class="modal-title">Gestión de Metas y Fondos</h2>
+        <span class="modal-subtitle">Define el aporte y el total objetivo de cada meta o fondo</span>
+      </div>
+      <button class="modal-close" (click)="onClose()" title="Cerrar">
+        <span>×</span>
+      </button>
+    </header>
+
+    <div class="modal-body">
+      <!-- Fondo de Ahorro para Metas -->
+      <div class="fund-card">
+        <div class="fund-header">
+          <span class="fund-icon">🎯</span>
+          <div>
+            <h3 class="fund-title">Fondo de Ahorro para Metas</h3>
+            <p class="fund-desc">Ahorro orientado a tus objetivos</p>
+          </div>
+        </div>
+
+        <div class="goal-inputs">
+          <div class="field">
+            <label class="field-label" for="savingsContribution">Aporte / Abono</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
+              <input
+                id="savingsContribution"
+                type="number"
+                class="money-input"
+                [(ngModel)]="savingsContribution"
+                name="savingsContribution"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="savingsTarget">Monto total de la meta</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
+              <input
+                id="savingsTarget"
+                type="number"
+                class="money-input"
+                [(ngModel)]="savingsTarget"
+                name="savingsTarget"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="fund-metric">
+          <span class="fund-current">{{ income.formatMoney(income.savingsGoal().contribution) }}</span>
+          <span class="fund-divider">/</span>
+          <span class="fund-target">{{ income.formatMoney(income.savingsGoal().target) }}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill orange" [style.width.%]="income.savingsProgress"></div>
+        </div>
+        <span class="progress-value">{{ income.savingsProgress }}% completado</span>
+      </div>
+
+      <!-- Control de Presupuesto por Categorías -->
+      <div class="fund-card">
+        <div class="fund-header">
+          <span class="fund-icon">🗂️</span>
+          <div>
+            <h3 class="fund-title">Control de Presupuesto por Categorías</h3>
+            <p class="fund-desc">Sigue tu gasto frente a tu presupuesto</p>
+          </div>
+        </div>
+        <div class="category-list">
+          <div class="category-item" *ngFor="let category of income.budgetCategories(); trackBy: trackCategory">
+            <div class="category-top">
+              <span class="category-name">{{ category.name }}</span>
+              <span class="category-amount">
+                {{ income.formatMoney(category.spent) }} / {{ income.formatMoney(category.budget) }}
+              </span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill orange" [style.width.%]="income.categoryProgress(category)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fondo de Emergencia -->
+      <div class="fund-card">
+        <div class="fund-header">
+          <span class="fund-icon">🛟</span>
+          <div>
+            <h3 class="fund-title">Fondo de Emergencia</h3>
+            <p class="fund-desc">Colchón de seguridad financiera</p>
+          </div>
+        </div>
+
+        <div class="goal-inputs">
+          <div class="field">
+            <label class="field-label" for="emergencyContribution">Aporte / Abono</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
+              <input
+                id="emergencyContribution"
+                type="number"
+                class="money-input"
+                [(ngModel)]="emergencyContribution"
+                name="emergencyContribution"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label" for="emergencyTarget">Monto total de la meta</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
+              <input
+                id="emergencyTarget"
+                type="number"
+                class="money-input"
+                [(ngModel)]="emergencyTarget"
+                name="emergencyTarget"
+                min="0"
+                step="100"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="fund-metric">
+          <span class="fund-current">{{ income.formatMoney(income.emergencyGoal().contribution) }}</span>
+          <span class="fund-divider">/</span>
+          <span class="fund-target">{{ income.formatMoney(income.emergencyGoal().target) }}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill orange" [style.width.%]="income.emergencyProgress"></div>
+        </div>
+        <span class="progress-value">{{ income.emergencyProgress }}% de protección</span>
+      </div>
+    </div>
+  </div>
+</div>
