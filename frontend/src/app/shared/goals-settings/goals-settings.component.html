@@ -3,7 +3,7 @@
     <header class="modal-header">
       <div>
         <h2 class="modal-title">Gestión de Metas y Fondos</h2>
-        <span class="modal-subtitle">Define el aporte y el total objetivo de cada meta o fondo</span>
+        <span class="modal-subtitle">Edita títulos, define el aporte y el total objetivo de cada meta</span>
       </div>
       <button class="modal-close" (click)="onClose()" title="Cerrar">
         <span>×</span>
@@ -11,14 +11,35 @@
     </header>
 
     <div class="modal-body">
-      <!-- Fondo de Ahorro para Metas -->
+      <!-- ===== Fondo de Ahorro para Metas ===== -->
       <div class="fund-card">
         <div class="fund-header">
           <span class="fund-icon">🎯</span>
-          <div>
-            <h3 class="fund-title">Fondo de Ahorro para Metas</h3>
-            <p class="fund-desc">Ahorro orientado a tus objetivos</p>
+          <div class="fund-heading">
+            <div *ngIf="editingGoal !== 'savings'">
+              <h3 class="fund-title">{{ income.savingsGoal().title }}</h3>
+              <p class="fund-desc">{{ income.savingsGoal().description }}</p>
+            </div>
+            <div *ngIf="editingGoal === 'savings'" class="heading-edit">
+              <input
+                type="text"
+                class="text-input"
+                [(ngModel)]="savingsTitle"
+                name="savingsTitle"
+                placeholder="Título de la meta"
+              />
+              <input
+                type="text"
+                class="text-input"
+                [(ngModel)]="savingsDescription"
+                name="savingsDescription"
+                placeholder="Descripción de la meta"
+              />
+            </div>
           </div>
+          <button class="edit-toggle" (click)="toggleEdit('savings')" [title]="editingGoal === 'savings' ? 'Guardar' : 'Editar'">
+            {{ editingGoal === 'savings' ? '✓' : '✎' }}
+          </button>
         </div>
 
         <div class="goal-inputs">
@@ -65,19 +86,30 @@
         <span class="progress-value">{{ income.savingsProgress }}% completado</span>
       </div>
 
-      <!-- Control de Presupuesto por Categorías -->
+      <!-- ===== Control de Presupuesto por Categorías ===== -->
       <div class="fund-card">
         <div class="fund-header">
           <span class="fund-icon">🗂️</span>
-          <div>
+          <div class="fund-heading">
             <h3 class="fund-title">Control de Presupuesto por Categorías</h3>
             <p class="fund-desc">Sigue tu gasto frente a tu presupuesto</p>
           </div>
+          <button class="edit-toggle" (click)="toggleEdit('budget')" [title]="editingGoal === 'budget' ? 'Guardar' : 'Editar'">
+            {{ editingGoal === 'budget' ? '✓' : '✎' }}
+          </button>
         </div>
         <div class="category-list">
-          <div class="category-item" *ngFor="let category of income.budgetCategories(); trackBy: trackCategory">
+          <div class="category-item" *ngFor="let category of income.budgetCategories(); let i = index; trackBy: trackIndex">
             <div class="category-top">
-              <span class="category-name">{{ category.name }}</span>
+              <input
+                *ngIf="editingGoal === 'budget'"
+                type="text"
+                class="text-input inline"
+                [value]="category.name"
+                (change)="updateCategoryName($any($event.target).value, i)"
+                placeholder="Nombre de categoría"
+              />
+              <span *ngIf="editingGoal !== 'budget'" class="category-name">{{ category.name }}</span>
               <span class="category-amount">
                 {{ income.formatMoney(category.spent) }} / {{ income.formatMoney(category.budget) }}
               </span>
@@ -89,14 +121,35 @@
         </div>
       </div>
 
-      <!-- Fondo de Emergencia -->
+      <!-- ===== Fondo de Emergencia ===== -->
       <div class="fund-card">
         <div class="fund-header">
           <span class="fund-icon">🛟</span>
-          <div>
-            <h3 class="fund-title">Fondo de Emergencia</h3>
-            <p class="fund-desc">Colchón de seguridad financiera</p>
+          <div class="fund-heading">
+            <div *ngIf="editingGoal !== 'emergency'">
+              <h3 class="fund-title">{{ income.emergencyGoal().title }}</h3>
+              <p class="fund-desc">{{ income.emergencyGoal().description }}</p>
+            </div>
+            <div *ngIf="editingGoal === 'emergency'" class="heading-edit">
+              <input
+                type="text"
+                class="text-input"
+                [(ngModel)]="emergencyTitle"
+                name="emergencyTitle"
+                placeholder="Título del fondo"
+              />
+              <input
+                type="text"
+                class="text-input"
+                [(ngModel)]="emergencyDescription"
+                name="emergencyDescription"
+                placeholder="Descripción del fondo"
+              />
+            </div>
           </div>
+          <button class="edit-toggle" (click)="toggleEdit('emergency')" [title]="editingGoal === 'emergency' ? 'Guardar' : 'Editar'">
+            {{ editingGoal === 'emergency' ? '✓' : '✎' }}
+          </button>
         </div>
 
         <div class="goal-inputs">
