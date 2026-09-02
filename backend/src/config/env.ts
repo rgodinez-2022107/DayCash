@@ -21,7 +21,7 @@ export const config = {
   corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:4200',
   jwt: {
     secret: requireEnv('JWT_SECRET', 'dev_secret_change_me'),
-    expiresIn: process.env.JWT_EXPIRES_IN || '30s',
+    expiresIn: process.env.JWT_EXPIRES_IN || '30m',
   },
   admin: {
     email: requireEnv('ADMIN_EMAIL', 'admin@financeapp.com'),
