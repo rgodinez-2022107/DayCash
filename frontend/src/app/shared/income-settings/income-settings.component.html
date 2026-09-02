@@ -2,8 +2,8 @@
   <div class="modal-shell" (click)="$event.stopPropagation()">
     <header class="modal-header">
       <div>
-        <h2 class="modal-title">Configuración de Ingresos</h2>
-        <span class="modal-subtitle">Los cambios se reflejan en tiempo real en tu balance</span>
+        <h2 class="modal-title">Nuevo Ingreso</h2>
+        <span class="modal-subtitle">Registra tu ingreso fijo y variable actualizando tu balance en tiempo real</span>
       </div>
       <button class="modal-close" (click)="onClose()" title="Cerrar">
         <span>×</span>
@@ -11,150 +11,72 @@
     </header>
 
     <div class="modal-body">
-      <!-- ===== Sección izquierda: Configuración de Ingresos ===== -->
-      <section class="income-panel">
-        <!-- Ingreso Fijo -->
-        <div class="settings-block">
-          <label class="block-label" for="fixedIncome">Ingreso Fijo</label>
-          <div class="input-group">
-            <span class="input-prefix">$</span>
+      <!-- Ingreso Fijo -->
+      <div class="settings-block">
+        <label class="block-label" for="fixedIncome">Ingreso Fijo</label>
+        <div class="input-group">
+          <span class="input-prefix">Q</span>
+          <input
+            id="fixedIncome"
+            type="number"
+            class="money-input"
+            [(ngModel)]="income.fixedIncome"
+            name="fixedIncome"
+            min="0"
+            step="100"
+          />
+        </div>
+      </div>
+
+      <!-- Ingreso Variable -->
+      <div class="settings-block">
+        <span class="block-label">Ingreso Variable</span>
+
+        <div class="variable-grid">
+          <div class="field">
+            <label class="field-label" for="variableHours">Horas trabajadas</label>
             <input
-              id="fixedIncome"
+              id="variableHours"
               type="number"
               class="money-input"
-              [(ngModel)]="income.fixedIncome"
-              name="fixedIncome"
+              [(ngModel)]="income.variableHours"
+              name="variableHours"
               min="0"
-              step="100"
+              step="1"
             />
-            <span class="input-suffix">MXN</span>
           </div>
-          <div class="progress-row">
-            <div class="progress-bar">
-              <div class="progress-fill orange" [style.width.%]="income.savingsProgress"></div>
-            </div>
-            <span class="progress-value">{{ income.savingsProgress }}% de meta</span>
-          </div>
-        </div>
-
-        <!-- Ingreso Variable -->
-        <div class="settings-block">
-          <span class="block-label">Ingreso Variable</span>
-
-          <div class="variable-grid">
-            <div class="field">
-              <label class="field-label" for="variableHours">Horas trabajadas</label>
+          <div class="field">
+            <label class="field-label" for="variableRate">Precio por hora</label>
+            <div class="input-group">
+              <span class="input-prefix">Q</span>
               <input
-                id="variableHours"
+                id="variableRate"
                 type="number"
                 class="money-input"
-                [(ngModel)]="income.variableHours"
-                name="variableHours"
+                [(ngModel)]="income.variableRate"
+                name="variableRate"
                 min="0"
-                step="1"
+                step="10"
               />
             </div>
-            <div class="field">
-              <label class="field-label" for="variableRate">Precio por hora</label>
-              <div class="input-group">
-                <span class="input-prefix">$</span>
-                <input
-                  id="variableRate"
-                  type="number"
-                  class="money-input"
-                  [(ngModel)]="income.variableRate"
-                  name="variableRate"
-                  min="0"
-                  step="10"
-                />
-                <span class="input-suffix">MXN</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Cálculo automático del subtotal variable -->
-          <div class="auto-calc">
-            <span class="tag-auto">Cálculo Automático</span>
-            <div class="calc-value">
-              <span class="calc-label">Total de Ingreso Variable</span>
-              <strong>{{ income.formatMoney(income.variableSubtotal) }}</strong>
-            </div>
           </div>
         </div>
 
-        <!-- Ingreso Mensual Total -->
-        <div class="total-row">
-          <span>Ingreso Mensual Total</span>
-          <strong>{{ income.formatMoney(income.monthlyTotal) }}</strong>
+        <!-- Cálculo automático del subtotal variable -->
+        <div class="auto-calc">
+          <span class="tag-auto">Cálculo Automático</span>
+          <div class="calc-value">
+            <span class="calc-label">Total de Ingreso Variable</span>
+            <strong>{{ income.formatMoney(income.variableSubtotal) }}</strong>
+          </div>
         </div>
-      </section>
+      </div>
 
-      <!-- ===== Sección derecha: Gestión de Metas y Fondos ===== -->
-      <section class="goals-panel">
-        <!-- Fondo de Ahorro para Metas -->
-        <div class="fund-card">
-          <div class="fund-header">
-            <span class="fund-icon">🎯</span>
-            <div>
-              <h3 class="fund-title">Fondo de Ahorro para Metas</h3>
-              <p class="fund-desc">Ahorro orientado a tus objetivos</p>
-            </div>
-          </div>
-          <div class="fund-metric">
-            <span class="fund-current">{{ income.formatMoney(income.savingsGoalCurrent()) }}</span>
-            <span class="fund-divider">/</span>
-            <span class="fund-target">{{ income.formatMoney(income.savingsGoalTarget()) }}</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill orange" [style.width.%]="income.savingsProgress"></div>
-          </div>
-          <span class="progress-value">{{ income.savingsProgress }}% completado</span>
-        </div>
-
-        <!-- Control de Presupuesto por Categorías -->
-        <div class="fund-card">
-          <div class="fund-header">
-            <span class="fund-icon">🗂️</span>
-            <div>
-              <h3 class="fund-title">Control de Presupuesto por Categorías</h3>
-              <p class="fund-desc">Sigue tu gasto frente a tu presupuesto</p>
-            </div>
-          </div>
-          <div class="category-list">
-            <div class="category-item" *ngFor="let category of income.budgetCategories(); trackBy: trackCategory">
-              <div class="category-top">
-                <span class="category-name">{{ category.name }}</span>
-                <span class="category-amount">
-                  {{ income.formatMoney(category.spent) }} / {{ income.formatMoney(category.budget) }}
-                </span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill orange" [style.width.%]="income.categoryProgress(category)"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Fondo de Emergencia -->
-        <div class="fund-card">
-          <div class="fund-header">
-            <span class="fund-icon">🛟</span>
-            <div>
-              <h3 class="fund-title">Fondo de Emergencia</h3>
-              <p class="fund-desc">Colchón de seguridad financiera</p>
-            </div>
-          </div>
-          <div class="fund-metric">
-            <span class="fund-current">{{ income.formatMoney(income.emergencyCurrent()) }}</span>
-            <span class="fund-divider">/</span>
-            <span class="fund-target">{{ income.formatMoney(income.emergencyTarget()) }}</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill orange" [style.width.%]="income.emergencyProgress"></div>
-          </div>
-          <span class="progress-value">{{ income.emergencyProgress }}% de protección</span>
-        </div>
-      </section>
+      <!-- Ingreso Mensual Total -->
+      <div class="total-row">
+        <span>Ingreso Mensual Total</span>
+        <strong>{{ income.formatMoney(income.monthlyTotal) }}</strong>
+      </div>
     </div>
   </div>
 </div>
