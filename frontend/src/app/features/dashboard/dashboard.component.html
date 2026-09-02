@@ -121,19 +121,18 @@
             <a href="javascript:void(0)" class="view-all">Ver todo</a>
           </div>
           <div class="activity-list">
-            <div class="activity-empty" *ngIf="recentActivities.length === 0">
+            <div class="activity-empty" *ngIf="income.incomeTransactions().length === 0">
               <span class="activity-empty-icon">📂</span>
               <p>Aún no hay transacciones. Registra tu primer ingreso o gasto.</p>
             </div>
-            <div class="activity-item" *ngFor="let item of recentActivities">
-              <div class="activity-icon" [ngClass]="item.type">
-                {{ item.type === 'income' ? '↓' : '↑' }}
-              </div>
+            <div class="activity-item" *ngFor="let tx of income.incomeTransactions()">
+              <div class="activity-icon income">↓</div>
               <div class="activity-details">
-                <strong>{{ item.title }}</strong>
-                <small>{{ item.date }}</small>
+                <strong>{{ income.formatMoney(tx.amount) }}</strong>
+                <small *ngIf="tx.note">{{ tx.note }}</small>
+                <small *ngIf="!tx.note">{{ tx.date }}</small>
               </div>
-              <span class="activity-amount" [ngClass]="item.type">{{ item.amount }}</span>
+              <span class="activity-amount income">{{ income.formatMoney(tx.amount) }}</span>
             </div>
           </div>
         </div>
