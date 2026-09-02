@@ -73,7 +73,7 @@
           <h1>Hola, {{ userName }}.</h1>
         </div>
         <div class="quick-actions">
-          <button class="action-pill income" (click)="addTransaction()">↓ Nuevo Ingreso</button>
+          <button class="action-pill income" (click)="openIncomeSettings()">↓ Nuevo Ingreso</button>
           <button class="action-pill expense" (click)="addTransaction()">↑ Nuevo Gasto</button>
         </div>
       </div>
@@ -84,7 +84,7 @@
         <div class="card balance-card">
           <div class="card-header">
             <span class="card-title">Balance Total</span>
-            <button class="options-btn" (click)="openIncomeSettings()" title="Configuración de ingresos">•••</button>
+            <button class="options-btn" (click)="openGoalsSettings()" title="Gestión de metas y fondos">•••</button>
           </div>
           <div class="balance-body">
             <h2>{{ totalBalance }}</h2>
@@ -121,6 +121,10 @@
             <a href="javascript:void(0)" class="view-all">Ver todo</a>
           </div>
           <div class="activity-list">
+            <div class="activity-empty" *ngIf="recentActivities.length === 0">
+              <span class="activity-empty-icon">📂</span>
+              <p>Aún no hay transacciones. Registra tu primer ingreso o gasto.</p>
+            </div>
             <div class="activity-item" *ngFor="let item of recentActivities">
               <div class="activity-icon" [ngClass]="item.type">
                 {{ item.type === 'income' ? '↓' : '↑' }}
@@ -141,7 +145,7 @@
           <div class="trend-icon-box">💡</div>
           <div class="trend-text">
             <h3>Análisis de Tendencias</h3>
-            <p>Detectamos que tus <strong>Gastos hormiga aumentaron un 20%</strong> esta semana en comparación con el promedio mensual. Considera revisar tus suscripciones activas.</p>
+            <p>Comienza a registrar tus ingresos y gastos para ver análisis y tendencias de tu actividad financiera.</p>
           </div>
         </div>
       </div>
@@ -150,4 +154,7 @@
 
   <!-- Modal de Configuración de Ingresos -->
   <app-income-settings *ngIf="showIncomeSettings" (close)="closeIncomeSettings()"></app-income-settings>
+
+  <!-- Modal de Gestión de Metas y Fondos -->
+  <app-goals-settings *ngIf="showGoalsSettings" (close)="closeGoalsSettings()"></app-goals-settings>
 </div>
